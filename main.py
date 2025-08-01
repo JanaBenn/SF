@@ -1,13 +1,15 @@
-from data_loader import load_and_clean_data
-from SM_interaction import plot_sm_user_insights
-from AD_interaction import describe_ads_users
-from visualization import plot_interaction_overview
+from data_loader import load_and_clean_data 
+from AD_interaction import barplots_vs_ads
+from visualisation import plot_interaction_overview
+from AD_interaction import plot_ads_engagement_distribution
 
 def main():
+    
     df = load_and_clean_data()
-    describe_ads_users(df)
-    plot_sm_user_insights(df)
+    barplots_vs_ads(df)
     plot_interaction_overview(df)
+    plot_ads_engagement_distribution(df)
+
 
 if __name__ == "__main__":
     main()
