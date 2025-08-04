@@ -5,7 +5,7 @@ def load_data():
     base_dir = os.path.dirname(__file__)
     relative_path = os.path.join("customer_behavour", "Ecommerce_Consumer_Behavior_Analysis_Data.csv")
     csv_path = os.path.join(base_dir, relative_path)
-    
+
     print("📂 Lade Datei von:", csv_path)
     df = pd.read_csv(csv_path)
     return df
@@ -36,7 +36,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(columns={
         "Time_Spent_on_Product_Research(hours)": "Time_Spent_on_Research"
     }, inplace=True)
-
+    df["Return_Rate"] = df["Return_Rate"].replace(2, 1)
     return df
 
 
@@ -55,3 +55,6 @@ if __name__ == "__main__":
 
     print("\n📊 Spalten und Datentypen:\n")
     print(df.dtypes)
+
+    print("Alle eindeutigen Werte in 'Purchase_Intent' und ihre Häufigkeit:")
+    print(df["Purchase_Intent"].value_counts())
