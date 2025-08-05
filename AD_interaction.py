@@ -3,8 +3,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def get_ads_users(df: pd.DataFrame) -> pd.DataFrame:
-    """Gibt Nutzer mit tatsächlicher Ads-Interaktion zurück (Wert > 0)."""
-    return df[df["Engagement_with_Ads"] > 0]
+    """Nur Nutzer mit Ads-Engagement > 0, aber ohne Social Media Einfluss."""
+    return df[
+        (df["Engagement_with_Ads"] > 0) &
+        (
+            df["Social_Media_Influence"].isna() |
+            (df["Social_Media_Influence"] == 0)
+        )
+    ]
 
 def describe_ads_users(df: pd.DataFrame):
     ads_users = get_ads_users(df)
@@ -314,4 +320,3 @@ def heatmap_return_rate_by_location_and_category(df: pd.DataFrame):
     plt.show()
 
 
- 
