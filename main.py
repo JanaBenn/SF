@@ -28,6 +28,7 @@ def main():
     heatmap_return_rate_by_location_and_category(df)
 
 
+
 if __name__ == "__main__":
     main()
     
