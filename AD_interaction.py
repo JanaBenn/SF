@@ -3,13 +3,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def get_ads_users(df: pd.DataFrame) -> pd.DataFrame:
-    """Nur Nutzer mit Ads-Engagement > 0, aber ohne Social Media Einfluss."""
+    """
+    Gibt Nutzer:innen zurück, die als "Ads-User" zählen:
+    - tatsächliche Interaktion mit Ads (Engagement_with_Ads > 0)
+    - UND Social Media Influence > 0 (nicht NaN)
+    """
     return df[
         (df["Engagement_with_Ads"] > 0) &
-        (
-            df["Social_Media_Influence"].isna() |
-            (df["Social_Media_Influence"] == 0)
-        )
+        (df["Social_Media_Influence"].notna()) &
+        (df["Social_Media_Influence"] > 0)
     ]
 
 def describe_ads_users(df: pd.DataFrame):
