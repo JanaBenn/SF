@@ -37,9 +37,16 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         "Time_Spent_on_Product_Research(hours)": "Time_Spent_on_Research"
     }, inplace=True)
     df["Return_Rate"] = df["Return_Rate"].replace(2, 1)
+
+    income_map = {
+        "Low": 0,
+        "Middle": 1,
+        "High": 2
+    }
+    df["Income_Level"] = df["Income_Level"].map(income_map).astype("Int64")
+    
     return df
-
-
+    
 # 👉 Einheitliche Funktion für externen Import
 def load_and_clean_data() -> pd.DataFrame:
     df = load_data()
