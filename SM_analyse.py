@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-import numpy as np
+import numpy as np 
+import statsmodels.api as sm 
 
 
 def get_sm_users(df: pd.DataFrame) -> pd.DataFrame:
@@ -89,3 +90,83 @@ def correlation_matrix_sm_return(df: pd.DataFrame, method: str = "spearman", sho
         plt.show()
 
     return corr_df
+
+
+
+# REGRESSIONEN
+
+
+
+
+def regression_agegroup_21_30_sm_logit(df: pd.DataFrame):
+    """
+    Führt eine logistische Regression durch:
+    Return_Rate (0/1) ~ Social_Media_Influence
+    für Altersgruppe 21–30
+    """
+
+    # Altersgruppen kategorisieren
+    df = categorize_age(df)
+
+    # Gefilterte Daten (nur 21–30)
+    filtered = df[
+        (df["Age_Group"] == "21–30") &
+        (df["Return_Rate"].isin([0, 1])) &
+        (df["Social_Media_Influence"].notna())
+    ]
+    
+    print(f"🎯 Gefilterte Zeilen: {len(filtered)}")
+    print(filtered.head())
+
+
+    if len(filtered) < 10:
+        print("⚠️ Zu wenige Datenpunkte für logistische Regression.")
+        return None
+
+    X = filtered[["Social_Media_Influence"]]
+    X = sm.add_constant(X)
+    y = filtered["Return_Rate"]
+
+    try:
+        model = sm.Logit(y, X).fit(disp=0)  # Kein zu langer Output
+        print("📘 Logistische Regression: Return_Rate ~ Social_Media_Influence (Alter 21–30)")
+        print(model.summary())
+        return model
+    except Exception as e:
+        print("❌ Fehler bei der logistischen Regression:", str(e))
+        return None
+    
+    
+    
+    
+def regression_all_ages_logit(df: pd.DataFrame):
+    """
+    Führt eine logistische Regression durch:
+    Return_Rate (0/1) ~ Social_Media_Influence
+    für alle Altersgruppen.
+    """
+
+    # Nur gültige 0/1-Return-Raten und nicht-leere Social_Media_Influence
+    filtered = df[
+        df["Return_Rate"].isin([0, 1]) & 
+        df["Social_Media_Influence"]>0
+    ]
+
+    print("Koeffizient -0.068: Mehr Social-Media-Influence ist leicht mit weniger Rückgaben assoziiert – aber nicht signifikant.")
+
+    if len(filtered) < 20:
+        print("⚠️ Zu wenige Datenpunkte für logistische Regression.")
+        return None
+
+    X = filtered[["Social_Media_Influence"]]
+    X = sm.add_constant(X)
+    y = filtered["Return_Rate"]
+
+    try:
+        model = sm.Logit(y, X).fit()
+        print("📘 Logistische Regression: Return_Rate ~ Social_Media_Influence (ALLE Altersgruppen)")
+        print(model.summary())
+        return model
+    except Exception as e:
+        print("❌ Fehler bei der logistischen Regression:", str(e))
+        return None
