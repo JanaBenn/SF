@@ -39,9 +39,9 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df["Return_Rate"] = df["Return_Rate"].replace(2, 1)
 
     income_map = {
-        "Low": 0,
-        "Middle": 1,
-        "High": 2
+        "Low": 1,
+        "Middle": 2,
+        "High": 3
     }
     df["Income_Level"] = df["Income_Level"].map(income_map).astype("Int64")
     
@@ -65,3 +65,6 @@ if __name__ == "__main__":
 
     print("Alle eindeutigen Werte in 'Purchase_Intent' und ihre Häufigkeit:")
     print(df["Purchase_Intent"].value_counts())
+    
+    income_counts = df["Income_Level"].value_counts(dropna=False).sort_index()
+    
