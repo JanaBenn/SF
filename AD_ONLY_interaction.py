@@ -146,6 +146,33 @@ def heatmap_ads_by_age_and_category(df: pd.DataFrame):
     plt.show()
 
 
+
+def heatmap_RET_by_age_and_category(df: pd.DataFrame):
+    df = get_ads_users(df)
+    df = categorize_age(df)
+
+    # Nur Produkte mit Return_Rate > 0 (nach deiner Vorgabe)
+    filtered = df[df["Engagement_with_Ads"] > 0]
+
+    # Pivot: Durchschnittliches Ads-Engagement nach Alter & Kategorie
+    pivot = filtered.pivot_table(
+        index="Purchase_Category",
+        columns="Age_Group",
+        values="Return_Rate",
+        aggfunc="mean"
+    )
+
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(pivot, annot=True, fmt=".2f", cmap="YlGnBu", linewidths=0.5)
+    plt.title("🎯 Return rate nach Alter & Produkt (nur Rückgaben)")
+    plt.xlabel("Altersgruppe")
+    plt.ylabel("Produktkategorie")
+    plt.tight_layout()
+    plt.show()
+
+
+
+
 def encode_purchase_intent(df):
     intent_map = {
         "Impulsive": 0,
