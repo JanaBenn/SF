@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt 
+import textwrap
+import re
 
 
 # -----------------------------------------------------------------------------
@@ -219,35 +221,184 @@ def plot_segment_heatmap(
     plt.show()
 
 
-if __name__ == "__main__":
-    import os
-    import sys
 
-    # Damit der services-Ordner gefunden wird
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+# -----------------------------------------------------------------------------
+# 4) Return-Tabelle 
+#    Top 29 Werte Segmentübergreifend (nach Return_% & total_purchases)
+# -----------------------------------------------------------------------------
 
-    from services.repository import DataRepository
-    from services.modeling import ReturnModeler
-    from services.returns import ReturnLookupService
 
-    # CSV laden
-    repo = DataRepository("customer_behavour/Ecommerce_Consumer_Behavior_Analysis_Data.csv")
-    df = repo.load_and_prepare()
 
-    # 1) Social/Ads – Vier Balken
-    plot_social_ads_fourbars(df)
+def plot_top_returns_table(df, top_n=20, title="Top Returns – Kategorie & Segment-übergreifend"):
+    """
+    Zeigt die top_n Zeilen mit den höchsten Return_% als Tabelle (Matplotlib).
+    Erwartet ein DataFrame wie lookup_clean.
+    Zeilen ohne Discount_Used werden leicht grau hinterlegt.
+    """
+    import matplotlib.pyplot as plt
 
-    # 2) Logit-OR-Heatmap
-    rm = ReturnModeler(df)
-    df_or = rm.collect_odds_ratios(alpha=0.8, allow_single_class=True)
-    plot_return_logit_summary(df_or)
+    print("[plot_top_returns_table] ACTIVE v3 — bbox/scale tuning enabled")
 
-    # 3) Segment-Heatmap für Beispielsegment
-    rl = ReturnLookupService(df)
-    lookup = rl.build_lookup()
-    plot_segment_heatmap(
-        lookup_df=lookup,
-        gender="Female",
-        income_label="High",
-        discount_used=True
+    # sortieren
+    top_df = df.sort_values(
+        by=["Return_%", "total_purchases"],
+        ascending=[False, False]
+    ).head(top_n).reset_index(drop=True)
+
+    # --- adaptive Spaltenbreiten nach Textlänge ---
+    cols = list(top_df.columns)
+    # Länge pro Spalte abschätzen (Header + Werte)
+    lengths = []
+    for c in cols:
+        vals = top_df[c].astype(str).tolist()
+        max_len = max([len(c)] + [len(v) for v in vals])
+        lengths.append(max_len)
+
+    # Kategorie bekommt zusätzlich einen Bonus (sichtbarer breiter)
+    try:
+        cat_idx = cols.index("Purchase_Category")
+        lengths[cat_idx] = int(lengths[cat_idx] * 1.6)
+    except ValueError:
+        pass
+
+    # normieren auf 1.0
+    total = float(sum(lengths)) if sum(lengths) > 0 else 1.0
+    col_widths = [L / total for L in lengths]
+
+    # --- Figure & Achse ---
+    fig, ax = plt.subplots(figsize=(14, min(0.30 * len(top_df) + 2.2, 15)))
+    # möglichst volle Fläche nutzen
+    ax.set_position([0.01, 0.02, 0.98, 0.92])  # [left, bottom, width, height]
+    ax.axis("off")
+
+    # --- Tabelle rendern — fast volle Fläche, nahe am Titel ---
+    table = ax.table(
+        cellText=top_df.values,
+        colLabels=cols,
+        colWidths=col_widths,      # adaptive Breiten
+        cellLoc="center",
+        loc="center",
+        bbox=[0, 0, 1, 1],   # maximal ausnutzen
     )
+
+    # Schrift & Zeilenhöhe kompakt
+    table.auto_set_font_size(False)
+    table.set_fontsize(9)
+    table.scale(1.0, 0.6)  # schmalere Zeilen
+
+    # Zeilen ohne Discount leicht grau einfärben
+    if "Discount_Used" in top_df.columns:
+        discount_col_idx = cols.index("Discount_Used")
+        for i in range(len(top_df)):
+            if not bool(top_df.iloc[i, discount_col_idx]):
+                for j in range(len(cols)):
+                    table[(i + 1, j)].set_facecolor("#f0f0f0")  # +1 wegen Headerzeile
+
+    # Titel sehr nah an Tabelle
+    ax.set_title(title, fontsize=14, pad=8)
+
+    # KEIN tight_layout, um bbox nicht zu zerstören
+    plt.show()
+    
+    
+    
+    
+# -----------------------------------------------------------------------------
+# 5) RECOMMENDATIONS 
+#    Je top 3 pro Altersgruppe (über ALLE Segmente)
+# -----------------------------------------------------------------------------
+    
+    
+    
+    
+def plot_recommendations_topk_all_ages_table(
+    reco_df: pd.DataFrame,
+    k: int = 3,
+    title: str = "Top 3 je Altersgruppe – nach Käufen & Rückgabe"
+) -> None:
+    """
+    Eine einzige Tabelle: kombiniere pro Altersgruppe die Top-k Zeilen.
+    Ranking pro Altersgruppe: total_purchases DESC, dann Return_% DESC.
+    Altersreihenfolge: <=20, 21–30, 31–40, 41–50, 51–60.
+    Recommendation-Spalte ist doppelt so breit.
+    """
+    if reco_df is None or reco_df.empty:
+        print("⚠️ Keine Empfehlungstabellen zu plotten.")
+        return
+
+    age_order = ["<=20","21–30","31–40","41–50","51–60"]
+    frames = []
+    for age in age_order:
+        sub = (
+            reco_df[reco_df["Age_Group"].astype(str) == age]
+            .sort_values(["total_purchases","Return_%"], ascending=[False, False])
+            .head(k)
+            .reset_index(drop=True)
+        )
+        if not sub.empty:
+            frames.append(sub.assign(Age_Group=age))
+
+    if not frames:
+        print("⚠️ Keine Daten in den ausgewählten Altersgruppen.")
+        return
+
+    combined = pd.concat(frames, ignore_index=True)
+
+    view = combined[
+        [
+            "Age_Group",
+            "Segment",
+            "Purchase_Category",
+            "total_purchases",
+            "Return_%",
+            "Ads_Status",
+            "Loyalty_Status",
+            "Recommendation",
+        ]
+    ].copy()
+
+    # Recommendation formattieren:
+    # - genau 2 Bausteine -> harter Zeilenumbruch zwischen beiden
+    # - sonst normaler Wrap
+    wrap_width = 70
+    def _fmt_reco(txt: str) -> str:
+    # Split an jedem '|' mit beliebigem Whitespace drum herum
+        parts = [p.strip() for p in re.split(r"\s*\|\s*", str(txt)) if p.strip()]
+        if len(parts) > 1:
+            # Immer harter Zeilenumbruch zwischen den Bausteinen
+            return "\n".join(parts)
+        # Falls nur ein Teil, ganz normal umbrechen
+        return "\n".join(textwrap.wrap(parts[0], width=wrap_width))
+    
+    view["Recommendation"] = view["Recommendation"].apply(_fmt_reco)
+
+    # Figure und Tabellen-Layout
+    fig_height = min(1 + 0.55 * len(view), 28)
+    fig, ax = plt.subplots(figsize=(22, fig_height))
+    ax.axis("off")
+
+    # Recommendation doppelt so breit
+    col_widths = [1.0, 1.2, 1.6, 1.0, 1.0, 1.1, 1.1, 2.2]
+
+    tbl = ax.table(
+        cellText=view.values,
+        colLabels=view.columns,
+        colWidths=col_widths,
+        cellLoc="left",
+        loc="center",
+        bbox=[0, 0, 1, 1],
+    )
+    tbl.auto_set_font_size(False)
+    tbl.set_fontsize(9)
+    tbl.scale(1.0, 1.25)
+
+    # Grau hinterlegen, wenn Discount_Used == False
+    if "Discount_Used" in combined.columns:
+        for i, used in enumerate(combined["Discount_Used"].astype(bool).tolist()):
+            if not used:
+                for j in range(view.shape[1]):
+                    tbl[(i + 1, j)].set_facecolor("#f5f5f5")
+
+    plt.title(title, fontsize=16, pad=12)
+    plt.tight_layout()
+    plt.show()
