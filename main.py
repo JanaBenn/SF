@@ -12,7 +12,7 @@ from Return import (
     pivot_segment_age_product,
     summarize_segments,
 )
-
+from AD_ONLY_analyse import (logistic_regression_ads_vs_return_by_age)
 
 def main():
     # 1) Daten laden
@@ -79,6 +79,7 @@ def main():
         fade_low_base=True
     )
 
+    logistic_regression_ads_vs_return_by_age(df)
 
 if __name__ == "__main__":
     main() 
