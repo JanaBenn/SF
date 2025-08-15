@@ -1,0 +1,30 @@
+Gender,Income_Label,Discount_Used,Age_Group,Purchase_Category,total_purchases,total_returns,Return_%,low_base
+Female,High,False,21–30,Luxury Goods,5,5.0,100.0,False
+Female,High,False,21–30,Office Supplies,3,3.0,100.0,False
+Female,High,False,31–40,Baby Products,3,3.0,100.0,False
+Female,High,False,41–50,Animal Feed,3,3.0,100.0,False
+Female,High,True,<=20,Electronics,3,3.0,100.0,False
+Female,High,True,41–50,Electronics,3,3.0,100.0,False
+Female,High,True,41–50,Jewelry & Accessories,5,4.0,80.0,False
+Female,Middle,False,21–30,Animal Feed,4,4.0,100.0,False
+Female,Middle,False,21–30,Jewelry & Accessories,3,3.0,100.0,False
+Female,Middle,False,31–40,Jewelry & Accessories,3,3.0,100.0,False
+Female,Middle,True,21–30,Office Supplies,3,3.0,100.0,False
+Female,Middle,True,31–40,Travel & Leisure (Flights,3,3.0,100.0,False
+Female,Middle,True,41–50,Jewelry & Accessories,3,3.0,100.0,False
+Male,High,False,31–40,Books,3,3.0,100.0,False
+Male,High,False,31–40,Clothing,4,4.0,100.0,False
+Male,High,False,31–40,Home Appliances,4,4.0,100.0,False
+Male,High,False,41–50,Baby Products,4,4.0,100.0,False
+Male,High,False,41–50,Travel & Leisure (Flights,4,4.0,100.0,False
+Male,High,True,31–40,Jewelry & Accessories,4,4.0,100.0,False
+Male,High,True,41–50,Health Supplements,3,3.0,100.0,False
+Male,High,True,41–50,Travel & Leisure (Flights,3,3.0,100.0,False
+Male,Middle,False,31–40,Books,3,3.0,100.0,False
+Male,Middle,False,41–50,Beauty & Personal Care,3,3.0,100.0,False
+Male,Middle,False,41–50,Health Care,3,3.0,100.0,False
+Male,Middle,False,41–50,Software & Apps,4,4.0,100.0,False
+Male,Middle,True,21–30,Furniture,3,3.0,100.0,False
+Male,Middle,True,31–40,Books,3,3.0,100.0,False
+Male,Middle,True,31–40,Groceries,4,4.0,100.0,False
+Male,Middle,True,31–40,Toys & Games,3,3.0,100.0,False
