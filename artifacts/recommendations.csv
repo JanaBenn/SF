@@ -1,0 +1,13 @@
+Gender,Income_Label,Discount_Used,Age_Group,Purchase_Category,total_purchases,total_returns,Return_%,Ads_Status,Loyalty_Status,Purchase_Channel,Recommendation,Segment
+Female,High,True,21–30,Clothing,3,2.0,66.7,vorhanden,vorhanden,In-Store,Rückversandoptionen anpassen | Ads prüfen | Verkaufspersonal schulen,Female | High | Disc=True
+Female,High,True,21–30,Hotels,3,2.0,66.7,vorhanden,vorhanden,Online,Rückversandoptionen anpassen | Ads prüfen | Produktbeschreibungen überprüfen,Female | High | Disc=True
+Female,High,True,21–30,Books,3,1.0,33.3,vorhanden,keine,In-Store,Rückversandoptionen anpassen | Membership-Programm vorschlagen | Ads prüfen | Verkaufspersonal schulen,Female | High | Disc=True
+Female,High,True,21–30,Toys & Games,3,1.0,33.3,vorhanden,vorhanden,Online,Rückversandoptionen anpassen | Ads prüfen | Produktbeschreibungen überprüfen,Female | High | Disc=True
+Female,High,True,31–40,Food & Beverages,4,2.0,50.0,vorhanden,vorhanden,In-Store,Rückversandoptionen anpassen | Ads prüfen | Verkaufspersonal schulen,Female | High | Disc=True
+Female,High,True,31–40,Sports & Outdoors,4,2.0,50.0,vorhanden,vorhanden,Online,Rückversandoptionen anpassen | Ads prüfen | Produktbeschreibungen überprüfen,Female | High | Disc=True
+Female,High,True,31–40,Health Care,4,1.0,25.0,vorhanden,vorhanden,Mixed,Rückversandoptionen anpassen | Ads prüfen,Female | High | Disc=True
+Female,High,True,41–50,Electronics,3,3.0,100.0,vorhanden,vorhanden,In-Store,Rückversandoptionen anpassen | Ads prüfen | Verkaufspersonal schulen,Female | High | Disc=True
+Female,High,True,41–50,Jewelry & Accessories,5,4.0,80.0,vorhanden,vorhanden,Mixed,Rückversandoptionen anpassen | Ads prüfen,Female | High | Disc=True
+Female,High,True,41–50,Animal Feed,3,2.0,66.7,vorhanden,vorhanden,Online,Rückversandoptionen anpassen | Ads prüfen | Produktbeschreibungen überprüfen,Female | High | Disc=True
+Female,High,True,41–50,Beauty & Personal Care,3,1.0,33.3,vorhanden,vorhanden,Online,Rückversandoptionen anpassen | Ads prüfen | Produktbeschreibungen überprüfen,Female | High | Disc=True
+Female,High,True,<=20,Electronics,3,3.0,100.0,vorhanden,vorhanden,Mixed,Rückversandoptionen anpassen | Ads prüfen,Female | High | Disc=True
